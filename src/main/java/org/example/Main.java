@@ -75,7 +75,6 @@ public class Main {
 
             }
             else if (cmd.equals("article list")) {
-                System.out.println("==목록==");
                 List<Article> articles = new ArrayList<>();
 
                 Connection conn = null;
@@ -107,12 +106,12 @@ public class Main {
                         articles.add(article);
                     }
 
+                    System.out.println("==목록==");
+                    System.out.println("번호   /   작성   /   수정   /   제목   /   본문   ");
+                    System.out.println("=".repeat(30));
+
                     for (Article article : articles) {
-                        System.out.println("번호 : " + article.getId());
-                        System.out.println("작성날짜 : " + article.getRegDate());
-                        System.out.println("수정날짜 : " + article.getUpdateDate());
-                        System.out.println("제목 : " + article.getTitle());
-                        System.out.println("내용 : " + article.getBody());
+                        System.out.printf("%s   /   %s   /   %s   /   %s   /   %s   \n", article.getId(), article.getRegDate(), article.getUpdateDate(), article.getTitle(), article.getBody());
                     }
 
 
