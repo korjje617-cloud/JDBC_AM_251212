@@ -60,7 +60,110 @@ public class App {
             return -1;
         }
 
-        if (cmd.equals("article write")) {
+        if (cmd.equals("member join")) {
+            String loginId = null;
+            String loginPw = null;
+            String loginPwConfirm = null;
+            String name = null;
+
+            System.out.println("==회원가입==");
+            
+            // 아이디 입력
+            while (true){
+                System.out.print("아이디 : ");
+                loginId = sc.nextLine().trim();
+                
+                // 아이디 입력값이 없음
+                if (loginId.length() == 0 || loginId.contains(" ")) {
+                    System.out.println("아이디를 다시 입력하세요");
+                    continue;
+                }
+                
+                // 중복 아이디 조회
+                SecSql sql = new SecSql();
+                sql.append("SELECT COUNT(*) > 0 FROM `member` WHERE `loginId` = ?;", loginId);
+                
+                // 중복 아이디임
+                boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+                if (isLoginIdDup) {
+                    System.out.println("사용중인 아이디");
+                    continue;
+                }
+                break;
+            }
+            // 중복 아이디가 없으면
+            
+            // 비밀번호 입력
+            while (true) {
+                System.out.print("비밀번호 : ");
+                loginPw = sc.nextLine();
+                
+                // 비밀번호 입력값이 없음
+                if (loginPw.length() == 0 || loginPw.contains(" ")) {
+                    System.out.println("비밀번호를 다시 입력하세요");
+                    continue;
+                }
+                
+                // 비밀번호 이중확인 일단 같다고 인정
+                boolean loginCheckPw = true;
+                
+                // 비밀번호 재입력
+                while (true) {
+                    System.out.print("비밀번호 확인 : ");
+                    loginPwConfirm = sc.nextLine().trim();
+                    
+                    // 비밀번호 재입력값이 없음
+                    if (loginPwConfirm.length() == 0 || loginPwConfirm.contains(" ")) {
+                        System.out.println("비밀번호를 다시 입력하세요");
+                        loginCheckPw = false;
+                        continue;
+                    }
+                    
+                    // 원래 비밀번호랑 재입력 비밀번호랑 다름
+                    if (loginPw.equals(loginPwConfirm) == false) {
+                        System.out.println("비밀번호가 일치하지 않습니다");
+                        loginCheckPw = false;
+                    }
+                    break;
+                }
+                    
+                    // 비밀번호 재입력까지 통과
+                    if (loginCheckPw) {
+                        break;
+                    }
+                }
+            
+            // 이름 입력
+            while (true) {
+                System.out.print("이름 : ");
+                name = sc.nextLine();
+                
+                // 이름 입력값이 없음
+                if (name.length() == 0 || name.contains(" ")) {
+                    System.out.println("이름을 다시 입력하세요");
+                    continue;
+                }
+                break;
+            }
+            
+            // 다 통과했으니 쿼리 입력
+            SecSql sql = new SecSql();
+            sql.append("INSERT INTO `member`");
+            sql.append("SET regDate = NOW(),");
+            sql.append("updateDate = NOW(),");
+            sql.append("loginId = ?,", loginId);
+            sql.append("loginPw = ?,", loginPw);
+            sql.append("`name` = ?;", name);
+            
+            // 쿼리 실행하고 나온 정수값 = 회원 번호 반환
+            int id = DBUtil.insert(conn, sql);
+
+            System.out.println(id + "번 회원 가입 완료");
+
+        }
+
+
+        else if (cmd.equals("article write")) {
             System.out.println("==글쓰기==");
             System.out.print("제목 : ");
             String title = sc.nextLine();
@@ -79,7 +182,9 @@ public class App {
             System.out.println(id + "번 글이 생성됨");
 
 
-        } else if (cmd.equals("article list")) {
+        }
+
+        else if (cmd.equals("article list")) {
             System.out.println("==목록==");
 
             List<Article> articles = new ArrayList<>();
@@ -104,7 +209,9 @@ public class App {
             for (Article article : articles) {
                 System.out.printf("  %d     /   %s   \n", article.getId(), article.getTitle());
             }
-        } else if (cmd.startsWith("article modify")) {
+        }
+
+        else if (cmd.startsWith("article modify")) {
 
             int id = 0;
 
@@ -146,7 +253,9 @@ public class App {
             DBUtil.update(conn, sql);
 
             System.out.println(id + "번 글이 수정되었습니다.");
-        } else if (cmd.startsWith("article detail")) {
+        }
+
+        else if (cmd.startsWith("article detail")) {
 
             int id = 0;
 
@@ -176,7 +285,9 @@ public class App {
             System.out.println("수정날짜 : " + article.getUpdateDate());
             System.out.println("제목 : " + article.getTitle());
             System.out.println("내용 : " + article.getBody());
-        } else if (cmd.startsWith("article delete")) {
+        }
+
+        else if (cmd.startsWith("article delete")) {
 
             int id = 0;
 
@@ -207,6 +318,7 @@ public class App {
 
             System.out.println(id + "번 글이 삭제되었습니다.");
         }
+
         return 0;
     }
 }
