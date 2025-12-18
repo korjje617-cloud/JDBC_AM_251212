@@ -1,6 +1,9 @@
 package org.example.service;
 
+import org.example.Member;
 import org.example.dao.MemberDao;
+import org.example.util.DBUtil;
+import org.example.util.SecSql;
 
 import java.sql.Connection;
 import java.util.Map;
@@ -20,9 +23,18 @@ public class MemberService {
         return memberDao.doJoin(conn, loginId, loginPw, name);
     }
 
+    public Member getMemberByLoginId(Connection conn, String loginId) {
+        SecSql sql = new SecSql();
+        sql.append("SELECT *");
+        sql.append("FROM `member`");
+        sql.append("WHERE loginId = ?;", loginId);
 
-    public Map<String, Object> getMemberByloginId(String loginId, Connection conn) {
-        return memberDao.getMemberByloginId(loginId, conn);
+        Map<String, Object> memberMap = DBUtil.selectRow(conn, sql);
 
+        if (memberMap.isEmpty()) {
+            return null;
+        }
+
+        return new Member(memberMap);
     }
 }

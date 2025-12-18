@@ -1,11 +1,11 @@
 package org.example.controller;
 
+import org.example.Member;
 import org.example.service.MemberService;
 import org.example.util.DBUtil;
 import org.example.util.SecSql;
 
 import java.sql.Connection;
-import java.util.Map;
 import java.util.Scanner;
 
 public class MemberController {
@@ -49,21 +49,36 @@ public class MemberController {
             break;
         }
 
-        Map<String, Object> member = memberService.getMemberByloginId(loginId, conn);
+        Member member = memberService.getMemberByLoginId(conn, loginId);
+
+        int tryMaxCount = 3;
+        int tryCount = 0;
 
         // 비밀번호 입력
         while (true) {
+            if (tryCount >= tryMaxCount) {
+                System.out.println("비밀번호를 확인하세요");
+                break;
+            }
+
             System.out.print("비밀번호 : ");
-            loginPw = sc.nextLine();
+            loginPw = sc.nextLine().trim();
 
             // 비밀번호 입력값이 없음
             if (loginPw.length() == 0 || loginPw.contains(" ")) {
-                System.out.println("비밀번호를 다시 입력하세요");
+                tryCount++;
+                System.out.printf("비밀번호 확인 후 재시도 (%d/3)\n", tryCount);
                 continue;
             }
+
+            if (member.getLoginPw().equals(loginPw) == false) {
+                tryCount++;
+                System.out.printf("비밀번호 확인 후 재시도 (%d/3)\n", tryCount);
+                continue;
+            }
+            System.out.println(member.getName() + "로그인 완료");
             break;
         }
-        System.out.println("로그인 완료");
 
     }
 
