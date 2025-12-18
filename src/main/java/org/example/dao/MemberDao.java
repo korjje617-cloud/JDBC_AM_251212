@@ -4,6 +4,7 @@ import org.example.util.DBUtil;
 import org.example.util.SecSql;
 
 import java.sql.Connection;
+import java.util.Map;
 
 public class MemberDao {
     public boolean isLoginIdDup(Connection conn, String loginId) {
@@ -26,5 +27,12 @@ public class MemberDao {
         sql.append("name = ?;", name);
 
         return DBUtil.insert(conn, sql);
+    }
+
+    public Map<String, Object> getMemberByloginId(String loginId, Connection conn) {
+        SecSql sql = new SecSql();
+        sql.append("SELECT * FROM `member`");
+        sql.append("WHERE loginId = ?", loginId);
+        return DBUtil.selectRow(conn, sql);
     }
 }

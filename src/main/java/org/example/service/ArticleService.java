@@ -17,7 +17,6 @@ public class ArticleService {
 
     public int doWrite(String title, String body) {
         return articleDao.doWrite(title, body);
-
     }
 
     public List<Article> getArticles() {
