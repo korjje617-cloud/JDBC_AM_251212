@@ -1,13 +1,11 @@
 package org.example.service;
 
 import org.example.dao.MemberDao;
-
 import java.sql.Connection;
 
 public class MemberService {
 
     private MemberDao memberDao;
-
     public MemberService() {
         this.memberDao = new MemberDao();
     }

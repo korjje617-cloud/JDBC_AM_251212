@@ -10,7 +10,6 @@ import java.util.Scanner;
 public class MemberController {
     private Connection conn;
     private Scanner sc;
-
     private MemberService memberService;
 
     public MemberController(Scanner sc, Connection conn) {
