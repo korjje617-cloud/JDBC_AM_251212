@@ -1,9 +1,13 @@
 package org.example;
 
+import org.example.controller.ArticleController;
+import org.example.controller.MemberController;
 import org.example.util.DBUtil;
 import org.example.util.SecSql;
 
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -60,109 +64,12 @@ public class App {
             return -1;
         }
 
+        MemberController memberController = new MemberController(sc, conn);
+        ArticleController articleController = new ArticleController();
+
         if (cmd.equals("member join")) {
-            String loginId = null;
-            String loginPw = null;
-            String loginPwConfirm = null;
-            String name = null;
-
-            System.out.println("==회원가입==");
-            
-            // 아이디 입력
-            while (true){
-                System.out.print("아이디 : ");
-                loginId = sc.nextLine().trim();
-                
-                // 아이디 입력값이 없음
-                if (loginId.length() == 0 || loginId.contains(" ")) {
-                    System.out.println("아이디를 다시 입력하세요");
-                    continue;
-                }
-                
-                // 중복 아이디 조회
-                SecSql sql = new SecSql();
-                sql.append("SELECT COUNT(*) > 0 FROM `member` WHERE `loginId` = ?;", loginId);
-                
-                // 중복 아이디임
-                boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
-                if (isLoginIdDup) {
-                    System.out.println("사용중인 아이디");
-                    continue;
-                }
-                break;
-            }
-            // 중복 아이디가 없으면
-            
-            // 비밀번호 입력
-            while (true) {
-                System.out.print("비밀번호 : ");
-                loginPw = sc.nextLine();
-                
-                // 비밀번호 입력값이 없음
-                if (loginPw.length() == 0 || loginPw.contains(" ")) {
-                    System.out.println("비밀번호를 다시 입력하세요");
-                    continue;
-                }
-                
-                // 비밀번호 이중확인 일단 같다고 인정
-                boolean loginCheckPw = true;
-                
-                // 비밀번호 재입력
-                while (true) {
-                    System.out.print("비밀번호 확인 : ");
-                    loginPwConfirm = sc.nextLine().trim();
-                    
-                    // 비밀번호 재입력값이 없음
-                    if (loginPwConfirm.length() == 0 || loginPwConfirm.contains(" ")) {
-                        System.out.println("비밀번호를 다시 입력하세요");
-                        loginCheckPw = false;
-                        continue;
-                    }
-                    
-                    // 원래 비밀번호랑 재입력 비밀번호랑 다름
-                    if (loginPw.equals(loginPwConfirm) == false) {
-                        System.out.println("비밀번호가 일치하지 않습니다");
-                        loginCheckPw = false;
-                    }
-                    break;
-                }
-                    
-                    // 비밀번호 재입력까지 통과
-                    if (loginCheckPw) {
-                        break;
-                    }
-                }
-            
-            // 이름 입력
-            while (true) {
-                System.out.print("이름 : ");
-                name = sc.nextLine();
-                
-                // 이름 입력값이 없음
-                if (name.length() == 0 || name.contains(" ")) {
-                    System.out.println("이름을 다시 입력하세요");
-                    continue;
-                }
-                break;
-            }
-            
-            // 다 통과했으니 쿼리 입력
-            SecSql sql = new SecSql();
-            sql.append("INSERT INTO `member`");
-            sql.append("SET regDate = NOW(),");
-            sql.append("updateDate = NOW(),");
-            sql.append("loginId = ?,", loginId);
-            sql.append("loginPw = ?,", loginPw);
-            sql.append("`name` = ?;", name);
-            
-            // 쿼리 실행하고 나온 정수값 = 회원 번호 반환
-            int id = DBUtil.insert(conn, sql);
-
-            System.out.println(id + "번 회원 가입 완료");
-
+            memberController.doJoin();
         }
-
-
         else if (cmd.equals("article write")) {
             System.out.println("==글쓰기==");
             System.out.print("제목 : ");
