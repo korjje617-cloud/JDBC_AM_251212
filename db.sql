@@ -138,3 +138,8 @@ WHERE id = 3;
 
 SELECT *
 FROM article;
+
+
+SELECT * FROM article
+WHERE title LIKE '%1%'
+    LIMIT 10;
