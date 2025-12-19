@@ -86,6 +86,11 @@ public class MemberController {
 
     public void login() {
 
+        if (Container.session.loginedMember != null) {
+            System.out.println("로그인 상태");
+            return;
+        }
+
         String loginId = null;
         String loginPw = null;
 
