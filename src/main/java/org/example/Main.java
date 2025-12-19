@@ -1,7 +1,15 @@
 package org.example;
 
+import org.example.exception.SQLErrorException;
+
 public class Main {
     public static void main(String[] args) {
-        new App().run();
+        try {
+            new App().run();
+        } catch (SQLErrorException e) {
+            System.out.println(e.getOrigin());
+//            System.err.println(e.getOrigin());
+            e.getOrigin().printStackTrace();
+        }
     }
 }

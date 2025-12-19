@@ -13,6 +13,11 @@ public class MemberController {
     }
 
     public void doJoin() {
+        if (Container.session.isLogined()) {
+            System.out.println("로그아웃 후 이용하세요");
+            return;
+        }
+
         String loginId = null;
         String loginPw = null;
         String loginPwConfirm = null;
@@ -85,9 +90,8 @@ public class MemberController {
     }
 
     public void login() {
-
-        if (Container.session.loginedMember != null) {
-            System.out.println("로그인 상태");
+        if (Container.session.isLogined()) {
+            System.out.println("로그아웃 후 이용하세요");
             return;
         }
 
@@ -139,8 +143,8 @@ public class MemberController {
                 continue;
             }
 
-            Container.session.loginedMember = member;
-            Container.session.loginedMemberId = member.getId();
+
+            Container.session.login(member);
 
             System.out.println(member.getName() + "님, 환영합니다!!!");
             break;
@@ -149,21 +153,19 @@ public class MemberController {
     }
 
     public void showProfile() {
-        if (Container.session.loginedMember == null) {
-            System.out.println("로그인 상태 x");
+        if (Container.session.isLogined() == false) {
+            System.out.println("로그인 후 이용하세요");
             return;
-        } else {
-            System.out.println(Container.session.loginedMember);
         }
+        System.out.println(Container.session.loginedMember);
     }
 
     public void logout() {
-        if (Container.session.loginedMember == null) {
-            System.out.println("로그인 상태 x");
+        if (Container.session.isLogined() == false) {
+            System.out.println("로그인 후 이용하세요");
             return;
         }
         System.out.println("==로그아웃 됨==");
-        Container.session.loginedMember = null;
-        Container.session.loginedMemberId = -1;
+        Container.session.logout();
     }
 }

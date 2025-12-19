@@ -27,8 +27,7 @@ public class Container {
 
     public static Session session;
 
-    // 왜 반대 순서대로 만들었을까?
-    public static void init(){
+    public static void init() {
         sc = new Scanner(System.in);
         session = new Session();
 
@@ -40,9 +39,6 @@ public class Container {
 
         articleController = new ArticleController();
         memberController = new MemberController();
+
     }
-
-
-
-
 }
