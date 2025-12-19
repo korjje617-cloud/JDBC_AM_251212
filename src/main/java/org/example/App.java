@@ -1,13 +1,13 @@
 package org.example;
 
+/// 컨테이너 클래스, 아티클+멤버 컨트롤러 클래스 연결
 import org.example.container.Container;
 import org.example.controller.ArticleController;
 import org.example.controller.MemberController;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
-import java.util.Scanner;
+/// 모든 import 클래스 불러오기
+import java.sql.*;
+import java.util.*;
 
 public class App {
 

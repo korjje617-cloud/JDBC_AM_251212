@@ -4,8 +4,8 @@ import org.example.container.Container;
 import org.example.dto.Article;
 import org.example.service.ArticleService;
 
-import java.util.List;
-import java.util.Scanner;
+import java.sql.*;
+import java.util.*;
 
 public class ArticleController {
 

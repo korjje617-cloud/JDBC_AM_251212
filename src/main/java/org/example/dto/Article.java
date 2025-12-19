@@ -1,6 +1,7 @@
 package org.example.dto;
 
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
 public class Article {
     private int id;

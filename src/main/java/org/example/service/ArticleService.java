@@ -4,9 +4,8 @@ import org.example.container.Container;
 import org.example.dao.ArticleDao;
 import org.example.dto.Article;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.*;
+import java.util.*;
 
 public class ArticleService {
 
