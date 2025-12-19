@@ -1,4 +1,4 @@
-package org.example;
+package org.example.dto;
 
 import java.util.Map;
 
@@ -26,6 +26,18 @@ public class Member {
         this.loginId = (String) memberMap.get("loginId");
         this.loginPw = (String) memberMap.get("loginPw");
         this.name = (String) memberMap.get("name");
+    }
+
+    @Override
+    public String toString() {
+        return "Member{" +
+                "id=" + id +
+                ", regDate='" + regDate + '\'' +
+                ", updateDate='" + updateDate + '\'' +
+                ", loginId='" + loginId + '\'' +
+                ", loginPw='" + loginPw + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 
     public int getId() {
@@ -74,17 +86,5 @@ public class Member {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return "Member{" +
-                "id=" + id +
-                ", regDate='" + regDate + '\'' +
-                ", updateDate='" + updateDate + '\'' +
-                ", loginId='" + loginId + '\'' +
-                ", loginPw='" + loginPw + '\'' +
-                ", name='" + name + '\'' +
-                '}';
     }
 }

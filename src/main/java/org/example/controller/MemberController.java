@@ -1,181 +1,164 @@
 package org.example.controller;
 
-import org.example.Member;
+import org.example.container.Container;
+import org.example.dto.Member;
 import org.example.service.MemberService;
-import org.example.util.DBUtil;
-import org.example.util.SecSql;
-
-import java.sql.Connection;
-import java.util.Scanner;
 
 public class MemberController {
-    private Connection conn;
-    private Scanner sc;
+
     private MemberService memberService;
 
-    public MemberController(Scanner sc, Connection conn) {
-        this.sc = sc;
-        this.conn = conn;
-        this.memberService = new MemberService();
+    public MemberController() {
+        this.memberService = Container.memberService;
     }
-
-    public void login() {
-        String loginId = null;
-        String loginPw = null;
-
-        System.out.println("==로그인==");
-
-        // 아이디 입력
-        while (true) {
-            System.out.print("아이디 : ");
-            loginId = sc.nextLine().trim();
-
-            // 아이디 입력값이 없음
-            if (loginId.length() == 0 || loginId.contains(" ")) {
-                System.out.println("아이디를 다시 입력하세요");
-                continue;
-            }
-
-            // 아이디 조회
-            SecSql sql = new SecSql();
-            sql.append("SELECT COUNT(*) > 0 FROM `member` WHERE `loginId` = ?;", loginId);
-
-            // 아이디 없음
-            boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
-            if (isLoginIdDup == false) {
-                System.out.println("아이디가 없습니다");
-                continue;
-            }
-            break;
-        }
-
-        Member member = memberService.getMemberByLoginId(conn, loginId);
-
-        int tryMaxCount = 3;
-        int tryCount = 0;
-
-        // 비밀번호 입력
-        while (true) {
-            if (tryCount >= tryMaxCount) {
-                System.out.println("비밀번호를 확인하세요");
-                break;
-            }
-
-            System.out.print("비밀번호 : ");
-            loginPw = sc.nextLine().trim();
-
-            // 비밀번호 입력값이 없음
-            if (loginPw.length() == 0 || loginPw.contains(" ")) {
-                tryCount++;
-                System.out.printf("비밀번호 확인 후 재시도 (%d/3)\n", tryCount);
-                continue;
-            }
-
-            if (member.getLoginPw().equals(loginPw) == false) {
-                tryCount++;
-                System.out.printf("비밀번호 확인 후 재시도 (%d/3)\n", tryCount);
-                continue;
-            }
-            System.out.println(member.getName() + "로그인 완료");
-            break;
-        }
-
-    }
-
-
-
 
     public void doJoin() {
         String loginId = null;
         String loginPw = null;
         String loginPwConfirm = null;
         String name = null;
-
         System.out.println("==회원가입==");
-
-        // 아이디 입력
         while (true) {
-            System.out.print("아이디 : ");
-            loginId = sc.nextLine().trim();
+            System.out.print("로그인 아이디 : ");
+            loginId = Container.sc.nextLine().trim();
 
-            // 아이디 입력값이 없음
             if (loginId.length() == 0 || loginId.contains(" ")) {
-                System.out.println("아이디를 다시 입력하세요");
+                System.out.println("아이디 똑바로 써");
                 continue;
             }
 
-            // 중복 아이디 조회
-            SecSql sql = new SecSql();
-            sql.append("SELECT COUNT(*) > 0 FROM `member` WHERE `loginId` = ?;", loginId);
+            boolean isLoginIdDup = memberService.isLoginIdDup(loginId);
 
-            // 중복 아이디임
-            boolean isLoginIdDup = DBUtil.selectRowBooleanValue(conn, sql);
+            System.out.println(isLoginIdDup);
+
             if (isLoginIdDup) {
-                System.out.println("사용중인 아이디");
+                System.out.println(loginId + "은(는) 이미 사용중");
                 continue;
             }
             break;
         }
-        // 중복 아이디가 없으면
 
-        // 비밀번호 입력
         while (true) {
             System.out.print("비밀번호 : ");
-            loginPw = sc.nextLine();
+            loginPw = Container.sc.nextLine().trim();
 
-            // 비밀번호 입력값이 없음
             if (loginPw.length() == 0 || loginPw.contains(" ")) {
-                System.out.println("비밀번호를 다시 입력하세요");
+                System.out.println("비밀번호 똑바로 써");
                 continue;
             }
 
-            // 비밀번호 이중확인 일단 같다고 인정
             boolean loginCheckPw = true;
 
-            // 비밀번호 재입력
             while (true) {
-                System.out.print("비밀번호 확인 : ");
-                loginPwConfirm = sc.nextLine().trim();
+                System.out.print("비번 확인 : ");
+                loginPwConfirm = Container.sc.nextLine().trim();
 
-                // 비밀번호 재입력값이 없음
                 if (loginPwConfirm.length() == 0 || loginPwConfirm.contains(" ")) {
-                    System.out.println("비밀번호를 다시 입력하세요");
-                    loginCheckPw = false;
+                    System.out.println("비밀번호 확인 똑바로 써");
                     continue;
                 }
 
-                // 원래 비밀번호랑 재입력 비밀번호랑 다름
                 if (loginPw.equals(loginPwConfirm) == false) {
-                    System.out.println("비밀번호가 일치하지 않습니다");
+                    System.out.println("비번이 일치하지 않아");
                     loginCheckPw = false;
                 }
                 break;
             }
-
-            // 비밀번호 재입력까지 통과
             if (loginCheckPw) {
                 break;
             }
         }
-
-        // 이름 입력
         while (true) {
             System.out.print("이름 : ");
-            name = sc.nextLine();
+            name = Container.sc.nextLine().trim();
 
-            // 이름 입력값이 없음
             if (name.length() == 0 || name.contains(" ")) {
-                System.out.println("이름을 다시 입력하세요");
+                System.out.println("이름 똑바로 써");
                 continue;
             }
             break;
         }
 
-        // 쿼리 실행하고 나온 정수값 = PK = 회원 번호 반환
-        int id = memberService.doJoin(conn, loginId, loginPw, name);
+        int id = memberService.doJoin(loginId, loginPw, name);
 
-        System.out.println(id + "번 회원 가입 완료");
+        System.out.println(id + "번 회원 가입함");
+    }
+
+    public void login() {
+
+        String loginId = null;
+        String loginPw = null;
+
+        System.out.println("==로그인==");
+        while (true) {
+            System.out.print("로그인 아이디 : ");
+            loginId = Container.sc.nextLine().trim();
+
+            if (loginId.length() == 0 || loginId.contains(" ")) {
+                System.out.println("아이디 똑바로 써");
+                continue;
+            }
+
+            boolean isLoginIdDup = memberService.isLoginIdDup(loginId);
+
+
+            if (isLoginIdDup == false) {
+                System.out.println(loginId + "은(는) 없어");
+                continue;
+            }
+            break;
+        }
+
+        Member member = memberService.getMemberByLoginId(loginId);
+
+        int tryMaxCount = 3;
+        int tryCount = 0;
+
+        while (true) {
+            if (tryCount >= tryMaxCount) {
+                System.out.println("비번 확인하고 다시 시도해");
+                break;
+            }
+            System.out.print("비밀번호 : ");
+            loginPw = Container.sc.nextLine().trim();
+
+            if (loginPw.length() == 0 || loginPw.contains(" ")) {
+                tryCount++;
+                System.out.printf("비밀번호 똑바로 써(%d/3)\n", tryCount);
+                continue;
+            }
+
+            if (member.getLoginPw().equals(loginPw) == false) {
+                tryCount++;
+                System.out.printf("비번 틀렸음(%d/3)\n", tryCount);
+                continue;
+            }
+
+            Container.session.loginedMember = member;
+            Container.session.loginedMemberId = member.getId();
+
+            System.out.println(member.getName() + "님, 환영합니다!!!");
+            break;
+        }
 
     }
-}
 
+    public void showProfile() {
+        if (Container.session.loginedMember == null) {
+            System.out.println("로그인 상태 x");
+            return;
+        } else {
+            System.out.println(Container.session.loginedMember);
+        }
+    }
+
+    public void logout() {
+        if (Container.session.loginedMember == null) {
+            System.out.println("로그인 상태 x");
+            return;
+        }
+        System.out.println("==로그아웃 됨==");
+        Container.session.loginedMember = null;
+        Container.session.loginedMemberId = -1;
+    }
+}
